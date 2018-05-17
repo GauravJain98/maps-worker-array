@@ -12,7 +12,7 @@
         #map {
             height: 80%;
             width: 60%;
-            float: left
+            float: left;
         }
 
         /* Optional: Makes the sample page fill the window. */
@@ -97,10 +97,16 @@
         }
 
         #mainlist {
-            float: right;
-            width: 20%;
+            float: left;
         }
-
+        .list{
+            border: 2px black solid;
+            height: 80%;
+            width: 30%;
+            float:right;
+            margin-right: 10px;
+        }
+        
     </style>
 </head>
 
@@ -136,10 +142,11 @@
         </div>
     </div>
         <div id="map"></div>
-        <div>
-            <ul id="mainlist">
+        <div class='list'>
+            <h3 style="background-color:#4d90fe;color:white">List</h3>
+            <ol id="mainlist" type='A'>
 
-            </ul>
+            </ol>
         </div>
     <div id="infowindow-content">
         <img src="" width="16" height="16" id="place-icon">
