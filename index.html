@@ -5,6 +5,7 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <meta charset="utf-8">
     <title>Draggable directions</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
     <style>
         /* Always set the map height explicitly to define the size of the div
      * element that contains the map. */
@@ -99,14 +100,17 @@
         #mainlist {
             float: left;
         }
-        .list{
+
+        .list {
             border: 2px black solid;
             height: 80%;
             width: 30%;
-            float:right;
+            float: right;
             margin-right: 10px;
         }
-        
+        .location{
+            width: 100%;
+        }
     </style>
 </head>
 
@@ -116,6 +120,7 @@
             <div id="title">
                 Autocomplete search
             </div>
+            <!--
             <div id="type-selector" class="pac-controls">
                 <input type="radio" name="type" id="changetype-all" checked="checked">
                 <label for="changetype-all">All</label>
@@ -133,21 +138,24 @@
                 <input type="checkbox" id="use-strict-bounds" value="">
                 <label for="use-strict-bounds">Strict Bounds</label>
             </div>
+-->
         </div>
         <div id="pac-container">
             <div id="input0" class="container">
                 <input id="pac-input0" class="location" type="text" placeholder="Enter a location">
             </div>
-            <button id='addbtn' value='+'>+</button>
         </div>
     </div>
-        <div id="map"></div>
-        <div class='list'>
-            <h3 style="background-color:#4d90fe;color:white">List</h3>
-            <ol id="mainlist" type='A'>
-
-            </ol>
-        </div>
+    <div id="map"></div>
+    <div class='list'>
+        <table id="mainlist" class="table table-primary table-bordered">
+            <tr>
+                <th>
+                    Places Added
+                </th>
+            </tr>
+        </table>
+    </div>
     <div id="infowindow-content">
         <img src="" width="16" height="16" id="place-icon">
         <span id="place-name" class="title"></span>
@@ -156,7 +164,7 @@
     </div>
     <script>
         pac = document.getElementById('pac-container')
-        html = ""
+/*        html = ""
         for (var i = 1; i < 23; i++) {
             html = html + '<div id="input' + i + '" class="hidden container"><input id="pac-input' + i + '" class="location" type="text" placeholder="Enter a location"><button onclick="addbutton">+</button></div>'
         }
@@ -169,6 +177,7 @@
             input.classList.remove('hidden')
         }
         pac.innerHTML = pac.innerHTML + html;
+*/
         var labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         var labelIndex = 0;
         var markerList = [];
@@ -243,7 +252,7 @@
                     if (results[0]) {
                         console.log(results[0].formatted_address)
                         list = document.getElementById('mainlist')
-                        list.innerHTML = list.innerHTML + '<li>' + results[0].formatted_address + '</li>'
+                        list.innerHTML = list.innerHTML + '<tr>' + results[0].formatted_address + '</tr>'
                     } else {
                         window.alert('No results found');
                     }
@@ -279,30 +288,29 @@
                 update(start, end, waypts);
             }
             input = document.getElementById('pac-input' + markerList.length);
-            var autocomplete = new google.maps.places.Autocomplete(input);
-            autocomplete.bindTo('bounds', map);
-            autocomplete.addListener('place_changed', function() {
-                infowindow.close();
-                var place = autocomplete.getPlace();
-                if (!place.geometry) {
-                    // User entered the name of a Place that was not suggested and
-                    // pressed the Enter key, or the Place Details request failed.
-                    window.alert("No details available for input: '" + place.name + "'");
-                    return;
-                }
-
-                // If the place has a geometry, then present it on a map.
-                if (place.geometry.viewport) {
-                    map.fitBounds(place.geometry.viewport);
-                } else {
-                    map.setCenter(place.geometry.location);
-                    map.setZoom(17); // Why 17? Because it looks good.
-                }
-                addMarker(place.geometry.location, map);
-
-            });
-
         }
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.bindTo('bounds', map);
+        autocomplete.addListener('place_changed', function() {
+            infowindow.close();
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                // User entered the name of a Place that was not suggested and
+                // pressed the Enter key, or the Place Details request failed.
+                window.alert("No details available for input: '" + place.name + "'");
+                return;
+            }
+
+            // If the place has a geometry, then present it on a map.
+            if (place.geometry.viewport) {
+                map.fitBounds(place.geometry.viewport);
+            } else {
+                map.setCenter(place.geometry.location);
+                map.setZoom(17); // Why 17? Because it looks good.
+            }
+            addMarker(place.geometry.location, map);
+
+        });
 
         function update(start, end, waypts) {
             var request = {
