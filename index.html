@@ -250,7 +250,7 @@
             var input1 = document.getElementById('pac-input1');
             var autocomplete2 = new google.maps.places.Autocomplete(input1);
             autocomplete2.addListener('place_changed', function() {
-                if (typeof(toChange) === "number" ) {
+                if (typeof(toChange) === "number") {
                     infowindow.close();
                     var place = autocomplete2.getPlace();
                     if (!place.geometry) {
@@ -281,18 +281,24 @@
             // This event listener calls addMarker() when the map is clicked.
             google.maps.event.addListener(map, "click", function(event) {
                 console.log(event)
-                addMarker(geocoder, event.latLng, map);
-
+                if (typeof(toChange) === "number") {
+                    window.alert('enter address')
+                } else {
+                    addMarker(geocoder, event.latLng, map);
+                }
             });
         }
         //add a line
-        function geocodeLatLng(geocoder, map, latlng) {
+        function geocodeLatLng(geocoder, map, latlng, lol) {
             geocoder.geocode({
                 'location': latlng
             }, function(results, status) {
                 if (status === 'OK') {
                     if (results[0]) {
-                        addList(results[0].formatted_address)
+                        if (lol === 1)
+                            addList(results[0].formatted_address)
+                        else
+                            return results[0].formatted_address;
                     } else {
                         window.alert('No results found');
                     }
@@ -301,8 +307,9 @@
                 }
             });
         }
+
         //return address
-        
+
         function changeMarker(geocoder, location, map) {
             var marker = new google.maps.Marker({
                 position: location,
@@ -315,7 +322,7 @@
             toChange++;
             var el = document.getElementById('row' + (toChange))
             console.log(el)
-            el.innerHTML = geocoder.name//geocodeaddress(geocoder, map, location)
+            el.innerHTML = geocoder.name //geocodeaddress(geocoder, map, location)
 
             var start = markerList[0];
             var end = markerList[markerList.length - 1];
@@ -352,7 +359,8 @@
                 });
             }
             if (geocoder !== 'no') {
-                geocodeLatLng(geocoder, map, location);
+                console.log(geocoder)
+                geocodeLatLng(geocoder, map, location, 1);
             }
             if (markerList.length > 1) {
                 update(start, end, waypts);
