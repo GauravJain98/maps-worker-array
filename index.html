@@ -181,7 +181,8 @@
         var labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         var labelIndex = 0;
         var markerList = [];
-        window.directionsService = new google.maps.DirectionsService();
+        var markers = [];
+        directionsService = new google.maps.DirectionsService();
 
         function initMap() {
             directionsDisplay = new google.maps.DirectionsRenderer({
@@ -193,7 +194,7 @@
                 lat: 28.6139,
                 lng: 77.044
             };
-            var map = new google.maps.Map(document.getElementById("map"), {
+            map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 12,
                 center: myLatLng
             });
@@ -252,7 +253,7 @@
                     if (results[0]) {
                         console.log(results[0].formatted_address)
                         list = document.getElementById('mainlist')
-                        list.innerHTML = list.innerHTML + '<tr>' + results[0].formatted_address + '</tr>'
+                        list.innerHTML = list.innerHTML + '<tr><td>' + results[0].formatted_address + '</td><td><button class= "change" id = button'+latlng +'" >+</button></td></tr>'
                     } else {
                         window.alert('No results found');
                     }
@@ -262,7 +263,30 @@
             });
         }
 
-
+        function change(location){
+            var marker = new google.maps.Marker({
+                position: location,
+                label: markers[0].getLabel(),
+                map: map
+            });
+            markers[0].setMap(null);
+            markers[0]=marker
+            markerList[0] =location
+            var start = markerList[0];
+            var end = markerList[markerList.length - 1];
+            var waypts = [];
+            for (var i = 1; i < markerList.length - 1; i++) {
+                waypts.push({
+                    location: markerList[i],
+                    stopover: true
+                });
+            }
+            if (markerList.length > 1) {
+                update(start, end, waypts);
+            }
+        }
+        
+        
         // Adds a marker to the map.
         function addMarker(geocoder, location, map) {
             // Add the marker at the clicked location, and add the next-available label
@@ -272,7 +296,7 @@
                 label: labels[labelIndex++ % labels.length],
                 map: map
             });
-            directionsService = new google.maps.DirectionsService();
+            markers.push(marker);
             markerList.push(location);
             var start = markerList[0];
             var end = markerList[markerList.length - 1];
@@ -321,6 +345,7 @@
                 travelMode: google.maps.TravelMode.DRIVING
             };
 
+            directionsService = new google.maps.DirectionsService();
             directionsService.route(request, function(response, status) {
                 console.log(status);
 
