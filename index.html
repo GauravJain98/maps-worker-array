@@ -158,6 +158,9 @@
                 <th>
                     Places Added
                 </th>
+                <th>
+                    To edit
+                </th>
             </tr>
         </table>
     </div>
@@ -194,12 +197,13 @@
                 suppressMarkers: true
             });
             var geocoder = new google.maps.Geocoder;
+            var geocoder = new google.maps.Geocoder;
 
             var myLatLng = {
                 lat: 28.6139,
                 lng: 77.044
             };
-            map = new google.maps.Map(document.getElementById("map"), {
+            var map = new google.maps.Map(document.getElementById("map"), {
                 zoom: 12,
                 center: myLatLng
             });
@@ -244,28 +248,37 @@
             var input1 = document.getElementById('pac-input1');
             var autocomplete2 = new google.maps.places.Autocomplete(input1);
             autocomplete2.addListener('place_changed', function() {
-                infowindow.close();
-                var place = autocomplete2.getPlace();
-                if (!place.geometry) {
-                    // User entered the name of a Place that was not suggested and
-                    // pressed the Enter key, or the Place Details request failed.
-                    window.alert("No details available for input: '" + place.name + "'");
-                    return;
-                }
+                try {
+                    if (toChange !== '') {
+                        infowindow.close();
+                        var place = autocomplete2.getPlace();
+                        if (!place.geometry) {
+                            // User entered the name of a Place that was not suggested and
+                            // pressed the Enter key, or the Place Details request failed.
+                            window.alert("No details available for input: '" + place.name + "'");
+                            return;
+                        }
 
-                // If the place has a geometry, then present it on a map.
-                if (place.geometry.viewport) {
-                    map.fitBounds(place.geometry.viewport);
-                } else {
-                    map.setCenter(place.geometry.location);
-                    map.setZoom(17); // Why 17? Because it looks good.
+                        // If the place has a geometry, then present it on a map.
+                        if (place.geometry.viewport) {
+                            map.fitBounds(place.geometry.viewport);
+                        } else {
+                            map.setCenter(place.geometry.location);
+                            map.setZoom(17); // Why 17? Because it looks good.
+                        }
+                        changeMarker(geocoder, place.geometry.location, map)
+                        // addMarker(geocoder, place.geometry.location, map);
+                        toChange = '';
+                    } else {
+                        window.alert('choose a location to be changed')
+                    }
+                } catch {
+                    window.alert('choose a location to be changed')
                 }
-                addMarker(geocoder, place.geometry.location, map);
 
             });
             autocomplete2.bindTo('bounds', map);
-            console.log(autocomplete2)
-            
+
             directionsDisplay.setMap(map);
             // This event listener calls addMarker() when the map is clicked.
             google.maps.event.addListener(map, "click", function(event) {
@@ -282,8 +295,8 @@
                 if (status === 'OK') {
                     if (results[0]) {
                         console.log(results[0].formatted_address)
-                        list = document.getElementById('mainlist')
-                        list.innerHTML = list.innerHTML + '<tr><td>' + results[0].formatted_address + '</td><td><button class= "change" id = button' + latlng + '" >+</button></td></tr>'
+                        list = document.getElementById('mainlist');
+                        list.innerHTML = list.innerHTML + '<tr><td>' + results[0].formatted_address + '</td><td><button onclick = "change(this)" id = "' + markers.length + '" >+</button></td></tr>'
                     } else {
                         window.alert('No results found');
                     }
@@ -293,7 +306,29 @@
             });
         }
 
-        
+        function changeMarker(geocoder, location, map) {
+            var marker = new google.maps.Marker({
+                position: location,
+                label: markers[toChange].getLabel(),
+                map: map
+            });
+            markers[toChange].setMap(null);
+            markers[toChange] = marker
+            markerList[toChange] = location
+            var start = markerList[0];
+            var end = markerList[markerList.length - 1];
+            var waypts = [];
+            for (var i = 1; i < markerList.length - 1; i++) {
+                waypts.push({
+                    location: markerList[i],
+                    stopover: true
+                });
+            }
+            if (markerList.length > 1) {
+                update(start, end, waypts);
+            }
+        }
+
         // Adds a marker to the map.
         function addMarker(geocoder, location, map) {
             // Add the marker at the clicked location, and add the next-available label
@@ -344,6 +379,15 @@
             });
         }
         google.maps.event.addDomListener(window, "load", initialize);
+
+
+        //get the location to be changed
+
+        function change(el) {
+            toChange = parseInt(el.id) - 1;
+            //enable the location
+
+        }
 
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw9fBoPfdryxzY1bTDzTMXYJHfhiVaCBQ&libraries=places&callback=initMap">
