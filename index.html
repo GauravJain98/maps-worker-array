@@ -342,30 +342,35 @@
         function addMarker(geocoder, location, map) {
             // Add the marker at the clicked location, and add the next-available label
             // from the array of alphabetical characters.
-            var marker = new google.maps.Marker({
-                position: location,
-                label: labels[labelIndex++ % labels.length],
-                map: map
-            });
-            markers.push(marker);
-            markerList.push(location);
-            var start = markerList[0];
-            var end = markerList[markerList.length - 1];
-            var waypts = [];
-            for (var i = 1; i < markerList.length - 1; i++) {
-                waypts.push({
-                    location: markerList[i],
-                    stopover: true
+            if (markerList.length < 26) {
+                var marker = new google.maps.Marker({
+                    position: location,
+                    label: labels[labelIndex++ % labels.length],
+                    map: map
                 });
+                markers.push(marker);
+                markerList.push(location);
+                var start = markerList[0];
+                var end = markerList[markerList.length - 1];
+                var waypts = [];
+                for (var i = 1; i < markerList.length - 1; i++) {
+                    waypts.push({
+                        location: markerList[i],
+                        stopover: true
+                    });
+                }
+                if (geocoder !== 'no') {
+                    console.log(geocoder)
+                    geocodeLatLng(geocoder, map, location, 1);
+                }
+                if (markerList.length > 1) {
+                    update(start, end, waypts);
+                }
+                input = document.getElementById('pac-input' + markerList.length);
             }
-            if (geocoder !== 'no') {
-                console.log(geocoder)
-                geocodeLatLng(geocoder, map, location, 1);
+            else{
+                window.alert('limit')
             }
-            if (markerList.length > 1) {
-                update(start, end, waypts);
-            }
-            input = document.getElementById('pac-input' + markerList.length);
         }
 
         function update(start, end, waypts) {
