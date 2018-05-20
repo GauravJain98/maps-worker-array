@@ -9,40 +9,32 @@
     <style>
         /* Always set the map height explicitly to define the size of the div
      * element that contains the map. */
-
         #map {
             height: 80%;
             width: 60%;
             float: left;
         }
-
         /* Optional: Makes the sample page fill the window. */
-
         html,
         body {
             height: 100%;
             margin: 0;
             padding: 0;
         }
-
         #description {
             font-family: Roboto;
             font-size: 15px;
             font-weight: 300;
         }
-
         #infowindow-content .title {
             font-weight: bold;
         }
-
         #infowindow-content {
             display: none;
         }
-
         #map #infowindow-content {
             display: inline;
         }
-
         .pac-card {
             margin: 10px 10px 0 0;
             border-radius: 2px 0 0 2px;
@@ -53,23 +45,19 @@
             background-color: #fff;
             font-family: Roboto;
         }
-
         #pac-container {
             padding-bottom: 12px;
             margin-right: 12px;
         }
-
         .pac-controls {
             display: inline-block;
             padding: 5px 11px;
         }
-
         .pac-controls label {
             font-family: Roboto;
             font-size: 13px;
             font-weight: 300;
         }
-
         #pac-input {
             background-color: #fff;
             font-family: Roboto;
@@ -80,11 +68,9 @@
             text-overflow: ellipsis;
             width: 400px;
         }
-
         #pac-input:focus {
             border-color: #4d90fe;
         }
-
         #title {
             color: #fff;
             background-color: #4d90fe;
@@ -92,15 +78,12 @@
             font-weight: 500;
             padding: 6px 12px;
         }
-
         .hidden {
             display: none;
         }
-
         #mainlist {
             float: left;
         }
-
         .list {
             border: 2px black solid;
             height: 80%;
@@ -108,11 +91,9 @@
             float: right;
             margin-right: 10px;
         }
-
         .location {
             width: 100%;
         }
-
     </style>
 </head>
 
@@ -122,34 +103,11 @@
             <div id="title">
                 Autocomplete search
             </div>
-            <!--
-            <div id="type-selector" class="pac-controls">
-                <input type="radio" name="type" id="changetype-all" checked="checked">
-                <label for="changetype-all">All</label>
-
-                <input type="radio" name="type" id="changetype-establishment">
-                <label for="changetype-establishment">Establishments</label>
-
-                <input type="radio" name="type" id="changetype-address">
-                <label for="changetype-address">Addresses</label>
-
-                <input type="radio" name="type" id="changetype-geocode">
-                <label for="changetype-geocode">Geocodes</label>
-            </div>
-            <div id="strict-bounds-selector" class="pac-controls">
-                <input type="checkbox" id="use-strict-bounds" value="">
-                <label for="use-strict-bounds">Strict Bounds</label>
-            </div>
--->
         </div>
         <div id="pac-container">
             <div id="input0" class="container">
                 To add locations
                 <input id="pac-input0" class="location" type="text" placeholder="Enter a location">
-            </div>
-            <div id="change-input" class="container">
-                To edit locations
-                <input id="pac-input1" class="location" type="text" placeholder="Enter a location">
             </div>
         </div>
     </div>
@@ -159,9 +117,6 @@
             <tr>
                 <th>
                     Places Added
-                </th>
-                <th>
-                    To edit
                 </th>
             </tr>
         </table>
@@ -174,34 +129,17 @@
     </div>
     <script>
         pac = document.getElementById('pac-container')
-        /*        html = ""
-                for (var i = 1; i < 23; i++) {
-                    html = html + '<div id="input' + i + '" class="hidden container"><input id="pac-input' + i + '" class="location" type="text" placeholder="Enter a location"><button onclick="addbutton">+</button></div>'
-                }
-                btnbtn = document.getElementById('addbtn')
-                btnbtn.onclick = addbtn
-
-                function addbtn() {
-                    var input = document.getElementById('input' + markerList.length);
-                    console.log(input)
-                    input.classList.remove('hidden')
-                }
-                pac.innerHTML = pac.innerHTML + html;
-        */
         var labels = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         var labelIndex = 0;
         var markerList = [];
         var markers = [];
         directionsService = new google.maps.DirectionsService();
         var toChange = ''
-
         function initMap() {
             directionsDisplay = new google.maps.DirectionsRenderer({
                 suppressMarkers: true
             });
             var geocoder = new google.maps.Geocoder;
-            var geocoder = new google.maps.Geocoder;
-
             var myLatLng = {
                 lat: 28.6139,
                 lng: 77.044
@@ -210,73 +148,16 @@
                 zoom: 12,
                 center: myLatLng
             });
-
             var card = document.getElementById('pac-card');
             var types = document.getElementById('type-selector');
             var strictBounds = document.getElementById('strict-bounds-selector');
-
             map.controls[google.maps.ControlPosition.TOP_RIGHT].push(card);
             infowindow = new google.maps.InfoWindow();
             infowindowContent = document.getElementById('infowindow-content');
             infowindow.setContent(infowindowContent);
             //for adding markers
-
             var input = document.getElementById('pac-input0');
-            var autocomplete = new google.maps.places.Autocomplete(input);
-            autocomplete.addListener('place_changed', function() {
-                infowindow.close();
-                var place = autocomplete.getPlace();
-                if (!place.geometry) {
-                    // User entered the name of a Place that was not suggested and
-                    // pressed the Enter key, or the Place Details request failed.
-                    window.alert("No details available for input: '" + place.name + "'");
-                    return;
-                }
-                addList(place.name) // If the place has a geometry, then present it on a map.
-                if (place.geometry.viewport) {
-                    map.fitBounds(place.geometry.viewport);
-                } else {
-                    map.setCenter(place.geometry.location);
-                    map.setZoom(17); // Why 17? Because it looks good.
-                }
-                addMarker('no', place.geometry.location, map);
-
-            });
-
-            // Bind the map's bounds (viewport) property to the autocomplete object,
-            // so that the autocomplete requests use the current map bounds for the
-            // bounds option in the request.
-            autocomplete.bindTo('bounds', map);
-            var input1 = document.getElementById('pac-input1');
-            var autocomplete2 = new google.maps.places.Autocomplete(input1);
-            autocomplete2.addListener('place_changed', function() {
-                if (typeof(toChange) === "number") {
-                    infowindow.close();
-                    var place = autocomplete2.getPlace();
-                    if (!place.geometry) {
-                        // User entered the name of a Place that was not suggested and
-                        // pressed the Enter key, or the Place Details request failed.
-                        window.alert("No details available for input: '" + place.name + "'");
-                        return;
-                    }
-
-                    // If the place has a geometry, then present it on a map.
-                    if (place.geometry.viewport) {
-                        map.fitBounds(place.geometry.viewport);
-                    } else {
-                        map.setCenter(place.geometry.location);
-                        map.setZoom(17); // Why 17? Because it looks good.
-                    }
-                    changeMarker(place, place.geometry.location, map)
-                    // addMarker(geocoder, place.geometry.location, map);
-                    toChange = '';
-                } else {
-                    window.alert('choose a location to be changed')
-                    return
-                }
-            });
-            autocomplete2.bindTo('bounds', map);
-
+            
             directionsDisplay.setMap(map);
             // This event listener calls addMarker() when the map is clicked.
             google.maps.event.addListener(map, "click", function(event) {
@@ -307,9 +188,7 @@
                 }
             });
         }
-
         //return address
-
         function changeMarker(geocoder, location, map) {
             var marker = new google.maps.Marker({
                 position: location,
@@ -323,7 +202,6 @@
             var el = document.getElementById('row' + (toChange))
             console.log(el)
             el.innerHTML = geocoder.name //geocodeaddress(geocoder, map, location)
-
             var start = markerList[0];
             var end = markerList[markerList.length - 1];
             var waypts = [];
@@ -337,7 +215,6 @@
                 update(start, end, waypts);
             }
         }
-
         // Adds a marker to the map.
         function addMarker(geocoder, location, map) {
             // Add the marker at the clicked location, and add the next-available label
@@ -372,7 +249,6 @@
                 window.alert('limit')
             }
         }
-
         function update(start, end, waypts) {
             var request = {
                 origin: start,
@@ -381,11 +257,9 @@
                 optimizeWaypoints: false,
                 travelMode: google.maps.TravelMode.DRIVING
             };
-
             directionsService = new google.maps.DirectionsService();
             directionsService.route(request, function(response, status) {
                 console.log(status);
-
                 if (status == google.maps.DirectionsStatus.OK) {
                     console.log(status);
                     console.log(response);
@@ -396,26 +270,18 @@
             });
         }
         google.maps.event.addDomListener(window, "load", initialize);
-
-
         //get the location to be changed
-
         function change(el) {
             toChange = parseInt(el.id) - 1;
             document.getElementById('row' + el.id).innerHTML = ""
             //enable the location
-
         }
-
         function addList(name) {
             list = document.getElementById('mainlist');
             list.innerHTML = list.innerHTML + '<tr><td id = "row' + markers.length + '">' + name + '</td><td><button onclick = "change(this)" id = "' + markers.length + '" >+</button></td></tr>'
         }
-
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw9fBoPfdryxzY1bTDzTMXYJHfhiVaCBQ&libraries=places&callback=initMap">
-
-
     </script>
 </body>
 
