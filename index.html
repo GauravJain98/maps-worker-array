@@ -158,7 +158,6 @@
             directionsDisplay = new google.maps.DirectionsRenderer({
                 suppressMarkers: true
             });
-            var geocoder = new google.maps.Geocoder;
             var myLatLng = {
                 lat: 28.6139,
                 lng: 77.044
@@ -182,7 +181,7 @@
                 value = event.target.value;
                 value = JSON.parse(value)
                 for (var val=0; val < value.length; val++) {
-                    addMarker(geocoder, value[val], map);
+                    addMarker( value[val], map);
                 }
                 //                 = new google.maps.LatLng(-33.8665433,151.1956316)
             }
@@ -193,32 +192,13 @@
                 if (typeof(toChange) === "number") {
                     window.alert('enter address')
                 } else {
-                    addMarker(geocoder, event.latLng, map);
+                    addMarker(event.latLng, map);
                 }
             });
         }
         //add a line
-        function geocodeLatLng(geocoder, map, latlng, lol) {
-            geocoder.geocode({
-                'location': latlng
-            }, function(results, status) {
-                if (status === 'OK') {
-                    if (results[0]) {
-                        if (lol === 1)
-                            addList(results[0].formatted_address)
-                        else
-                            return results[0].formatted_address;
-                    } else {
-                        window.alert('No results found');
-                    }
-                } else {
-                    window.alert('Geocoder failed due to: ' + status);
-                }
-            });
-        }
-        /
         // Adds a marker to the map.
-        function addMarker(geocoder, location, map) {
+        function addMarker(location, map) {
             // Add the marker at the clicked location, and add the next-available label
             // from the array of alphabetical characters.
             if (markerList.length < 26) {
@@ -240,10 +220,6 @@
                 }
                 
                 update(start, end, waypts);
-                if (geocoder !== 'no') {
-                    console.log(geocoder)
-                    geocodeLatLng(geocoder, map, location, 1);
-                }
                 if (markerList.length > 1) {
                     update(start, end, waypts);
                 }
