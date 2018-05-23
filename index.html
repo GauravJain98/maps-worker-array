@@ -131,15 +131,6 @@
         </div>
     </div>
     <div id="map"></div>
-    <div class='list'>
-        <table id="mainlist" class="table table-primary table-bordered">
-            <tr>
-                <th>
-                    Places Added
-                </th>
-            </tr>
-        </table>
-    </div>
     <div id="infowindow-content">
         <img src="" width="16" height="16" id="place-icon">
         <span id="place-name" class="title"></span>
@@ -210,11 +201,9 @@
                     });
                 }
                 
-                update(start, end, waypts);
                 if (markerList.length > 1) {
                     update(start, end, waypts);
                 }
-                input = document.getElementById('pac-input' + markerList.length);
             } else {
                 window.alert('limit')
             }
@@ -230,30 +219,14 @@
             };
             directionsService = new google.maps.DirectionsService();
             directionsService.route(request, function(response, status) {
-                console.log(status);
                 if (status == google.maps.DirectionsStatus.OK) {
                     console.log(status);
                     console.log(response);
                     directionsDisplay.setDirections(response);
-                    var route = response.routes[0];
                 }
-                console.log("bool");
             });
         }
         google.maps.event.addDomListener(window, "load", initialize);
-        //get the location to be changed
-        function change(el) {
-            toChange = parseInt(el.id) - 1;
-            document.getElementById('row' + el.id).innerHTML = ""
-            //enable the location
-        }
-
-        function addList(name) {
-            list = document.getElementById('mainlist');
-            list.innerHTML = list.innerHTML + '<tr><td id = "row' + markers.length + '">' + name +
-                '</td><td><button onclick = "change(this)" id = "' + markers.length + '" >+</button></td></tr>'
-        }
-
     </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBw9fBoPfdryxzY1bTDzTMXYJHfhiVaCBQ&libraries=places&callback=initMap">
 
