@@ -216,33 +216,7 @@
                 }
             });
         }
-        //return address
-        function changeMarker(geocoder, location, map) {
-            var marker = new google.maps.Marker({
-                position: location,
-                label: markers[toChange].getLabel(),
-                map: map
-            });
-            markers[toChange].setMap(null);
-            markers[toChange] = marker
-            markerList[toChange] = location
-            toChange++;
-            var el = document.getElementById('row' + (toChange))
-            console.log(el)
-            el.innerHTML = geocoder.name //geocodeaddress(geocoder, map, location)
-            var start = markerList[0];
-            var end = markerList[markerList.length - 1];
-            var waypts = [];
-            for (var i = 1; i < markerList.length - 1; i++) {
-                waypts.push({
-                    location: markerList[i],
-                    stopover: true
-                });
-            }
-            if (markerList.length > 1) {
-                update(start, end, waypts);
-            }
-        }
+        /
         // Adds a marker to the map.
         function addMarker(geocoder, location, map) {
             // Add the marker at the clicked location, and add the next-available label
