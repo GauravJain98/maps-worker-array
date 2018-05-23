@@ -186,15 +186,7 @@
                 //                 = new google.maps.LatLng(-33.8665433,151.1956316)
             }
             directionsDisplay.setMap(map);
-            // This event listener calls addMarker() when the map is clicked.
-            google.maps.event.addListener(map, "click", function(event) {
-                console.log(event)
-                if (typeof(toChange) === "number") {
-                    window.alert('enter address')
-                } else {
-                    addMarker(event.latLng, map);
-                }
-            });
+            // This event listener calls addMarker() when the map is clicked.11
         }
         //add a line
         // Adds a marker to the map.
